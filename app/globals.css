@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 0%, rgba(167, 139, 250, 0.12), transparent 60%),
+    radial-gradient(ellipse 70% 45% at 85% 15%, rgba(52, 211, 153, 0.1), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(251, 146, 60, 0.08), transparent 60%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Floating glow blobs and orbit rings used by TechOrnaments (transform/opacity only) */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(16px, -28px, 0);
+  }
+}
+
+@keyframes float-slower {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-20px, 24px, 0);
+  }
+}
+
+@keyframes spin-cw {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-ccw {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 14s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 18s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-cw 50s linear infinite;
+}
+
+.animate-spin-slower {
+  animation: spin-ccw 80s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slower,
+  .animate-spin-slow,
+  .animate-spin-slower {
+    animation: none;
+  }
+}
+
+/* Full-width hero band with centered content */
+.hero-band {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(ellipse 60% 100% at 50% -20%, rgba(167, 139, 250, 0.18), transparent 70%),
+    rgba(10, 10, 10, 0.55);
+}
+
+/* Hide scrollbar for the phase filter pills */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Lightweight fade-in for timeline cards (opacity + transform only, GPU-cheap) */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up {
+    animation: none;
+  }
+}
+
+/* Lightweight accent glow on hover (box-shadow only, no animation) */
+.timeline-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 24px var(--accent-glow);
 }
