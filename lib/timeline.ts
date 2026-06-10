@@ -10,6 +10,7 @@ export interface TimelineItem {
   week: number;
   activity: string;
   phase: Phase;
+  status?: "selesai" | "belum"; // set to "selesai" to mark this item done
 }
 
 export interface PhaseStyle {
@@ -149,8 +150,8 @@ export function groupByWeek(items: TimelineItem[]): WeekGroup[] {
   });
 }
 
-export function getWeekCompletion(items: TimelineItem[], todayStr: string): { done: number; total: number } {
-  const done = items.filter((item) => item.date <= todayStr).length;
+export function getWeekCompletion(items: TimelineItem[], completed: Set<string>): { done: number; total: number } {
+  const done = items.filter((item) => item.status === "selesai" || completed.has(item.date)).length;
   return { done, total: items.length };
 }
 

@@ -36,7 +36,17 @@ export default function TimelineApp({
     () => weeks.reduce((sum, week) => sum + week.items.length, 0),
     [weeks]
   );
-  const progress = totalItems > 0 ? Math.round((completed.size / totalItems) * 100) : 0;
+
+  const codeCompletedDates = useMemo(
+    () => new Set(weeks.flatMap((week) => week.items.filter((item) => item.status === "selesai").map((item) => item.date))),
+    [weeks]
+  );
+  const effectiveCompleted = useMemo(
+    () => new Set([...completed, ...codeCompletedDates]),
+    [completed, codeCompletedDates]
+  );
+
+  const progress = totalItems > 0 ? Math.round((effectiveCompleted.size / totalItems) * 100) : 0;
 
   const filteredWeeks = useMemo(() => {
     if (filter === "Semua") return weeks;
@@ -142,7 +152,7 @@ export default function TimelineApp({
 
         {filteredWeeks.length > 0 && view === "general" &&
           filteredWeeks.map((week) => {
-            const completion = getWeekCompletion(week.items, today);
+            const completion = getWeekCompletion(week.items, effectiveCompleted);
             return (
               <section key={week.week} className="mb-12 last:mb-0">
                 <FadeIn className="mb-6 flex items-end justify-between gap-4">
@@ -160,7 +170,7 @@ export default function TimelineApp({
                         isToday={item.date === today}
                         isFirst={index === 0}
                         isLast={index === week.items.length - 1}
-                        completed={completed.has(item.date)}
+                        completed={effectiveCompleted.has(item.date)}
                         onToggle={() => requestToggle(item.date)}
                       />
                     </FadeIn>
@@ -171,7 +181,7 @@ export default function TimelineApp({
           })}
 
         {filteredWeeks.length > 0 && view === "roadmap" && (
-          <RoadmapView weeks={filteredWeeks} today={today} completed={completed} onToggle={requestToggle} />
+          <RoadmapView weeks={filteredWeeks} today={today} completed={effectiveCompleted} onToggle={requestToggle} />
         )}
       </main>
 
